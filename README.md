@@ -1,6 +1,9 @@
 # Portão eletrônico com ESP8266
 
-Esse software foi criado para atender a internet das coisas aplicada em um portão eletrônico, nesse caso o modelo da placa mãe foi a "ROSSI KX30FS V1.2-14" 
+Esse software foi criado para atender a internet das coisas aplicada em um portão eletrônico, nesse caso o modelo da placa mãe foi a "ROSSI KX30FS V1.2-14".
+
+Para mais detalhes veja em meu canal do 
+[![Youtube](https://img.shields.io/badge/-Youtube-red?style=flat-square&logo=Youtube&logoColor=white&link=https://www.youtube.com/watch?v=ZnhqpuoW1xQ)](https://www.youtube.com/watch?v=ZnhqpuoW1xQ)
 
 ## Tecnologia usada
 
