@@ -3,6 +3,8 @@
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
 
+#include "Credenciais.h"
+
 static const uint8_t BOTOEIRA = D3;
 static const uint8_t AJUSTE = D1;
 static const uint8_t APRENDER = D2;
@@ -25,12 +27,6 @@ BlynkTimer timer;
 
 void leituraDosLeds();
 
-char ssid[] = ""; 
-char pass[] = "";
-char domain[] = "";
-int port = 80;
-char auth[] = "";
-
 void setup()
 {
   pinMode(BOTOEIRA, OUTPUT);
@@ -48,7 +44,7 @@ void setup()
 
   Serial.begin(9600);
 
-  Blynk.begin(auth, ssid, pass, domain, port);
+  Blynk.begin(authPortaoGrande, ssidPortaoGrande, passPortaoGrande, domain, port);
 
   timer.setInterval(100L, leituraDosLeds);
 }
