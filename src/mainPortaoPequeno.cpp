@@ -5,10 +5,14 @@
 
 #include "Credenciais.h"
 
+BlynkTimer timer;
+
+void pinHigh();
+
 void setup()
 {
   pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, LOW);
+  pinHigh();
 
   Serial.begin(9600);
 
@@ -18,9 +22,16 @@ void setup()
 void loop()
 {
   Blynk.run();
+  timer.run();
 }
 
-BLYNK_WRITE(V0)
+BLYNK_WRITE(V1)
 {
-  digitalWrite(LED_BUILTIN, param.asInt());
+  digitalWrite(LED_BUILTIN, LOW);
+  timer.setTimer(500L, pinHigh, 1);
+}
+
+void pinHigh()
+{
+  digitalWrite(LED_BUILTIN, HIGH);
 }
