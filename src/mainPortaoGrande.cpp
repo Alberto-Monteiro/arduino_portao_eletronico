@@ -4,6 +4,7 @@
 #include <BlynkSimpleEsp8266.h>
 
 #include "Credenciais.h"
+#include "OTA.h"
 
 static const uint8_t BOTOEIRA = D3;
 static const uint8_t AJUSTE = D1;
@@ -47,12 +48,16 @@ void setup()
   Blynk.begin(authPortaoGrande, ssidPortaoGrande, passPortaoGrande, domain, port);
 
   timer.setInterval(100L, leituraDosLeds);
+
+  configOTA();
+  ArduinoOTA.setHostname("esp8266_portao_grande");
 }
 
 void loop()
 {
   Blynk.run();
   timer.run();
+  ArduinoOTA.handle();
 }
 
 BLYNK_WRITE(V1)
