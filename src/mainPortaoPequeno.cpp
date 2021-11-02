@@ -2,11 +2,15 @@
 
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
+#include <ESPAsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#include <AsyncElegantOTA.h>
 
 #include "Credenciais.h"
-#include "OTA.h"
 
 BlynkTimer timer;
+
+AsyncWebServer server(80);
 
 void setup()
 {
@@ -17,15 +21,17 @@ void setup()
 
   Blynk.begin(authPortaoPequeno, ssidPortaoPequeno, passPortaoPequeno, domain, port);
 
-  configOTA();
-  ArduinoOTA.setHostname("esp8266_portao_pequeno");
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(200, "text/plain", "ESP8266 Portao pequeno"); });
+  AsyncElegantOTA.begin(&server, "admin", "ab123654789");
+  server.begin();
 }
 
 void loop()
 {
   Blynk.run();
   timer.run();
-  ArduinoOTA.handle();
+  AsyncElegantOTA.loop();
 }
 
 BLYNK_WRITE(V1)
