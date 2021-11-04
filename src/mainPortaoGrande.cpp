@@ -2,9 +2,11 @@
 
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
+#include <ESPAsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#include <AsyncElegantOTA.h>
 
 #include "Credenciais.h"
-#include "OTA.h"
 
 static const uint8_t BOTOEIRA = D3;
 static const uint8_t AJUSTE = D1;
@@ -25,6 +27,8 @@ WidgetLED led_st(V6);
 WidgetLED led_af(V7);
 
 BlynkTimer timer;
+
+AsyncWebServer server(80);
 
 void leituraDosLeds();
 
@@ -49,15 +53,18 @@ void setup()
 
   timer.setInterval(100L, leituraDosLeds);
 
-  configOTA();
-  ArduinoOTA.setHostname("esp8266_portao_grande");
+  server.begin();
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(200, "text/plain", "ESP8266 Portao grande"); });
+
+  AsyncElegantOTA.begin(&server, "admin", "ab123654789");
 }
 
 void loop()
 {
   Blynk.run();
   timer.run();
-  ArduinoOTA.handle();
+  AsyncElegantOTA.loop();
 }
 
 BLYNK_WRITE(V1)

@@ -21,10 +21,11 @@ void setup()
 
   Blynk.begin(authPortaoPequeno, ssidPortaoPequeno, passPortaoPequeno, domain, port);
 
+  server.begin();
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", "ESP8266 Portao pequeno"); });
+
   AsyncElegantOTA.begin(&server, "admin", "ab123654789");
-  server.begin();
 }
 
 void loop()
