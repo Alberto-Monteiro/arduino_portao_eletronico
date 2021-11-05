@@ -57,7 +57,7 @@ void setup()
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", "ESP8266 Portao grande"); });
 
-  AsyncElegantOTA.begin(&server, "admin", "ab123654789");
+  AsyncElegantOTA.begin(&server, otaUser, otaPassword);
 }
 
 void loop()
@@ -132,4 +132,11 @@ void leituraDosLeds()
       led_st.on();
     }
   }
+}
+
+BLYNK_CONNECTED()
+{
+  Serial.println("IP local:");
+  Serial.println(WiFi.localIP());
+  Blynk.virtualWrite(V10, WiFi.localIP().toString().c_str());
 }
