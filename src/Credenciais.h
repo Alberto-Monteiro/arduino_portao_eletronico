@@ -1,8 +1,11 @@
 char domain[] = "";
 int port = 80;
 
-char ssidPortaoPequeno[] = ""; char passPortaoPequeno[] = "";
+char ssidPortaoPequeno[] = "", passPortaoPequeno[] = "";
 char authPortaoPequeno[] = "";
 
-char ssidPortaoGrande[] = ""; char passPortaoGrande[] = "";
+char ssidPortaoGrande[] = "", passPortaoGrande[] = "";
 char authPortaoGrande[] = "";
+
+char otaUser[] = "";
+char otaPassword[] = "";
