@@ -17,6 +17,9 @@ void setup()
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
 
+  pinMode(D2, OUTPUT);
+  digitalWrite(D2, LOW);
+
   Serial.begin(9600);
 
   Blynk.begin(authPortaoPequeno, ssidPortaoPequeno, passPortaoPequeno, domain, port);
@@ -38,6 +41,7 @@ void loop()
 BLYNK_WRITE(V1)
 {
   digitalWrite(LED_BUILTIN, !param.asInt());
+  digitalWrite(D2, param.asInt());
   //if (param.asInt() == 0)
   //{
   //  digitalWrite(LED_BUILTIN, LOW);
