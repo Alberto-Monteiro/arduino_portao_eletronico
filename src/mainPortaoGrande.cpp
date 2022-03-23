@@ -123,7 +123,7 @@ void leituraDosLeds()
 BLYNK_WRITE(V1)
 {
   openTheGate(param.asInt());
-  Blynk.virtualWrite(V1, 0);
+  Blynk.virtualWrite(V1, "0");
 }
 
 void openTheGate(int pinValue)
