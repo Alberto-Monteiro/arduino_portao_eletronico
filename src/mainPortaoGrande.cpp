@@ -8,6 +8,9 @@
 
 #include "Credenciais.h"
 
+BlynkTimer blynkTimer;
+AsyncWebServer serverOTA(80);
+
 static const uint8_t BOTOEIRA = D3;
 static const uint8_t AJUSTE = D1;
 static const uint8_t APRENDER = D2;
@@ -25,10 +28,6 @@ int pinLedST = LOW;
 WidgetLED led_st(V6);
 
 WidgetLED led_af(V7);
-
-BlynkTimer timer;
-
-AsyncWebServer server(80);
 
 void leituraDosLeds();
 
@@ -51,35 +50,20 @@ void setup()
 
   Blynk.begin(authPortaoGrande, ssidPortaoGrande, passPortaoGrande, domain, port);
 
-  timer.setInterval(100L, leituraDosLeds);
+  blynkTimer.setInterval(100L, leituraDosLeds);
 
-  server.begin();
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(200, "text/plain", "ESP8266 Portao grande"); });
+  serverOTA.begin();
+  serverOTA.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
+               { request->send(200, "text/plain; charset=UTF-8", "ESP8266 Portão grande V1.0.1"); });
 
-  AsyncElegantOTA.begin(&server, otaUser, otaPassword);
+  AsyncElegantOTA.begin(&serverOTA, otaUser, otaPassword);
 }
 
 void loop()
 {
   Blynk.run();
-  timer.run();
+  blynkTimer.run();
   AsyncElegantOTA.loop();
-}
-
-BLYNK_WRITE(V1)
-{
-  digitalWrite(BOTOEIRA, param.asInt() == 0 ? 1 : 0);
-}
-
-BLYNK_WRITE(V2)
-{
-  digitalWrite(AJUSTE, param.asInt() == 0 ? 1 : 0);
-}
-
-BLYNK_WRITE(V3)
-{
-  digitalWrite(APRENDER, param.asInt() == 0 ? 1 : 0);
 }
 
 void leituraDosLeds()
@@ -132,6 +116,34 @@ void leituraDosLeds()
       led_st.on();
     }
   }
+}
+
+BLYNK_WRITE(V1)
+{
+  openTheGate(param.asInt());
+  Blynk.virtualWrite(V1, 0);
+}
+
+void openTheGate(int pinValue)
+{
+  if (pinValue == 1)
+  {
+    digitalWrite(BOTOEIRA, LOW);
+    blynkTimer.setTimer(
+        300L, []()
+        { digitalWrite(BOTOEIRA, HIGH); },
+        1);
+  }
+}
+
+BLYNK_WRITE(V2)
+{
+  digitalWrite(AJUSTE, param.asInt() == 0 ? 1 : 0);
+}
+
+BLYNK_WRITE(V3)
+{
+  digitalWrite(APRENDER, param.asInt() == 0 ? 1 : 0);
 }
 
 BLYNK_CONNECTED()
