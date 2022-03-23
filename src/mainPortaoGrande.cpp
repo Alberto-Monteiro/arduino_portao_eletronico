@@ -31,6 +31,8 @@ WidgetLED led_af(V7);
 
 void leituraDosLeds();
 
+void openTheGate(int pinValue);
+
 void setup()
 {
   pinMode(BOTOEIRA, OUTPUT);
