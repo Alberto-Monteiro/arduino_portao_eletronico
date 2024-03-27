@@ -1,15 +1,15 @@
 #define BLYNK_PRINT Serial
 
 #include <ESP8266WiFi.h>
+#include <WiFiClient.h>
+#include <ESP8266WebServer.h>
+#include <ElegantOTA.h>
 #include <BlynkSimpleEsp8266.h>
-#include <ESPAsyncTCP.h>
-#include <ESPAsyncWebServer.h>
-#include <AsyncElegantOTA.h>
 
 #include "Credenciais.h"
 
+ESP8266WebServer server(80);
 BlynkTimer blynkTimer;
-AsyncWebServer serverOTA(80);
 bool isWiFiConected = false;
 int valuePinBotoeira = LOW;
 
@@ -41,18 +41,20 @@ void setup()
 
   Blynk.begin(authPortaoPequeno, ssidPortaoPequeno, passPortaoPequeno, domain, port);
 
-  serverOTA.begin();
-  serverOTA.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-               { request->send(200, "text/plain; charset=UTF-8", "ESP8266 Portão pequeno V1.0.1"); });
+  server.on("/", []() {
+    server.send(200, "text/plain", "Hi! This is ElegantOTA Demo.");
+  });
 
-  AsyncElegantOTA.begin(&serverOTA, otaUser, otaPassword);
+  ElegantOTA.begin(&server, otaUser, otaPassword);
+  server.begin();
 }
 
 void loop()
 {
+  server.handleClient();
+  ElegantOTA.loop();
   Blynk.run();
   blynkTimer.run();
-  AsyncElegantOTA.loop();
 }
 
 BLYNK_WRITE(V1)
