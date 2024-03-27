@@ -42,7 +42,7 @@ void setup()
   Blynk.begin(authPortaoPequeno, ssidPortaoPequeno, passPortaoPequeno, domain, port);
 
   server.on("/", []() {
-    server.send(200, "text/plain", "Hi! This is ElegantOTA Demo.");
+    server.send(200, "text/plain; charset=UTF-8", "ESP8266 Portão pequeno V1.0.1");
   });
 
   ElegantOTA.begin(&server, otaUser, otaPassword);
