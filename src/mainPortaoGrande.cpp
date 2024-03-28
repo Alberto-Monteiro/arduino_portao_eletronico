@@ -1,15 +1,15 @@
 #define BLYNK_PRINT Serial
 
 #include <ESP8266WiFi.h>
+#include <WiFiClient.h>
+#include <ESP8266WebServer.h>
+#include <ElegantOTA.h>
 #include <BlynkSimpleEsp8266.h>
-#include <ESPAsyncTCP.h>
-#include <ESPAsyncWebServer.h>
-#include <AsyncElegantOTA.h>
 
 #include "Credenciais.h"
 
+ESP8266WebServer server(80);
 BlynkTimer blynkTimer;
-AsyncWebServer serverOTA(80);
 
 static const uint8_t BOTOEIRA = D3;
 static const uint8_t AJUSTE = D1;
@@ -54,18 +54,20 @@ void setup()
 
   blynkTimer.setInterval(100L, leituraDosLeds);
 
-  serverOTA.begin();
-  serverOTA.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-               { request->send(200, "text/plain; charset=UTF-8", "ESP8266 Portão grande V1.0.1"); });
+  server.on("/", []() {
+    server.send(200, "text/plain; charset=UTF-8", "ESP8266 Portão grande V1.0.1");
+  });
 
-  AsyncElegantOTA.begin(&serverOTA, otaUser, otaPassword);
+  ElegantOTA.begin(&server, otaUser, otaPassword);
+  server.begin();
 }
 
 void loop()
 {
+  server.handleClient();
+  ElegantOTA.loop();
   Blynk.run();
   blynkTimer.run();
-  AsyncElegantOTA.loop();
 }
 
 void leituraDosLeds()
