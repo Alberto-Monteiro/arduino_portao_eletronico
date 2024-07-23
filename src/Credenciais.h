@@ -1,11 +1,25 @@
-char domain[] = "";
-int port = 80;
+#ifndef CREDENCIAIS_H
+#define CREDENCIAIS_H
 
-char ssidPortaoPequeno[] = "", passPortaoPequeno[] = "";
-char authPortaoPequeno[] = "";
+extern const char *domain;
+extern const int port;
 
-char ssidPortaoGrande[] = "", passPortaoGrande[] = "";
-char authPortaoGrande[] = "";
+extern const char *otaUser;
+extern const char *otaPassword;
 
-char otaUser[] = "";
-char otaPassword[] = "";
+extern const char *ssidPortaoPequeno;
+extern const char *passPortaoPequeno;
+
+extern const char *authPortaoPequeno;
+
+extern const char *ssidPortaoGrande;
+extern const char *passPortaoGrande;
+
+extern const char *authPortaoGrande;
+
+extern const char *ssidTest;
+extern const char *passTest;
+
+extern const char *authTest;
+
+#endif // CREDENCIAIS_H

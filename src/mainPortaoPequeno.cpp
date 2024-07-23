@@ -6,7 +6,7 @@
 #include <ElegantOTA.h>
 #include <BlynkSimpleEsp8266.h>
 
-#include "Credenciais.h"
+#include "credenciais.h"
 
 ESP8266WebServer server(80);
 BlynkTimer blynkTimer;
