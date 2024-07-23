@@ -15,7 +15,7 @@ static const uint8_t BOTOEIRA = D3;
 static const uint8_t AJUSTE = D1;
 static const uint8_t APRENDER = D2;
 
-static const uint8_t LED_FF = D0;
+static const uint8_t LED_FF = D7;
 int pinLedFF = LOW;
 WidgetLED led_ff(V4);
 
