@@ -11,9 +11,10 @@
 ESP8266WebServer server(80);
 BlynkTimer blynkTimer;
 
-static const uint8_t BOTOEIRA = D3;
-static const uint8_t AJUSTE = D1;
 static const uint8_t APRENDER = D2;
+static const uint8_t BOTOEIRA = D3;
+static const uint8_t BOTOEIRA_A = D5;
+static const uint8_t BOTOEIRA_F = D6;
 
 static const uint8_t LED_FF = D7;
 int pinLedFF = LOW;
@@ -23,30 +24,20 @@ static const uint8_t LED_FA = D4;
 int pinLedFA = LOW;
 WidgetLED led_fa(V5);
 
-static const uint8_t LED_ST = D5;
-int pinLedST = LOW;
-WidgetLED led_st(V6);
-
 WidgetLED led_af(V7);
 
 void leituraDosLeds();
 
-void openTheGate(int pinValue);
+void interacaoComPortao(int pinValue, uint8_t pin);
 
 void setup()
 {
-  pinMode(BOTOEIRA, OUTPUT);
-  digitalWrite(BOTOEIRA, HIGH);
-
-  pinMode(AJUSTE, OUTPUT);
-  digitalWrite(AJUSTE, HIGH);
-
-  pinMode(APRENDER, OUTPUT);
-  digitalWrite(APRENDER, HIGH);
-
+  pinMode(APRENDER, INPUT);
+  pinMode(BOTOEIRA, INPUT);
+  pinMode(BOTOEIRA_A, INPUT);
+  pinMode(BOTOEIRA_F, INPUT);
   pinMode(LED_FF, INPUT);
   pinMode(LED_FA, INPUT);
-  pinMode(LED_ST, INPUT);
 
   Serial.begin(9600);
 
@@ -54,20 +45,20 @@ void setup()
 
   blynkTimer.setInterval(100L, leituraDosLeds);
 
-  server.on("/", []() {
-    server.send(200, "text/plain; charset=UTF-8", "ESP8266 Portão grande V1.0.1");
-  });
+  server.on("/", []()
+            { server.send(200, "text/plain; charset=UTF-8", "ESP8266 Portão grande V1.1.0"); });
 
   ElegantOTA.begin(&server, otaUser, otaPassword);
+
   server.begin();
 }
 
 void loop()
 {
-  server.handleClient();
-  ElegantOTA.loop();
   Blynk.run();
   blynkTimer.run();
+  ElegantOTA.loop();
+  server.handleClient();
 }
 
 void leituraDosLeds()
@@ -107,47 +98,53 @@ void leituraDosLeds()
       Blynk.setProperty(V1, "onLabel", "Fechar");
     }
   }
+}
 
-  if (pinLedST != digitalRead(LED_ST))
+void interacaoComPortao(int pinValue, uint8_t pin)
+{
+  if (pinValue == 1)
   {
-    pinLedST = digitalRead(LED_ST);
-    if (digitalRead(LED_ST) == HIGH)
-    {
-      led_st.off();
-    }
-    else
-    {
-      led_st.on();
-    }
+    pinMode(pin, OUTPUT);
+    digitalWrite(pin, LOW);
+
+    auto resetPin = pin == BOTOEIRA
+                        ? []()
+    { pinMode(BOTOEIRA, INPUT); }
+                    : pin == BOTOEIRA_A ? []()
+    { pinMode(BOTOEIRA_A, INPUT); }
+                                        : []()
+    { pinMode(BOTOEIRA_F, INPUT); };
+
+    blynkTimer.setTimer(500L, resetPin, 1);
   }
 }
 
 BLYNK_WRITE(V1)
 {
-  openTheGate(param.asInt());
-  Blynk.virtualWrite(V1, "0");
+  interacaoComPortao(param.asInt(), BOTOEIRA);
 }
 
-void openTheGate(int pinValue)
+BLYNK_WRITE(V8)
 {
-  if (pinValue == 1)
-  {
-    digitalWrite(BOTOEIRA, LOW);
-    blynkTimer.setTimer(
-        300L, []()
-        { digitalWrite(BOTOEIRA, HIGH); },
-        1);
-  }
+  interacaoComPortao(param.asInt(), BOTOEIRA_A);
 }
 
-BLYNK_WRITE(V2)
+BLYNK_WRITE(V9)
 {
-  digitalWrite(AJUSTE, param.asInt() == 0 ? 1 : 0);
+  interacaoComPortao(param.asInt(), BOTOEIRA_F);
 }
 
 BLYNK_WRITE(V3)
 {
-  digitalWrite(APRENDER, param.asInt() == 0 ? 1 : 0);
+  if (param.asInt() == 1)
+  {
+    pinMode(APRENDER, OUTPUT);
+    digitalWrite(APRENDER, LOW);
+  }
+  else
+  {
+    pinMode(APRENDER, INPUT);
+  }
 }
 
 BLYNK_CONNECTED()
